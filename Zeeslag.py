@@ -1,7 +1,7 @@
 #GLOBALE VARIABELEN
 from tkinter import *
 venster = Tk()
-venster.geometry("800x800")
+# venster.geometry("800x800")
 # venster.attributes('-fullscreen', True)
 venster.wm_title("Zeeslagje")
 venster.config(bg="lightblue")
@@ -26,12 +26,14 @@ def maak_gui_bord():
     for rij in range(10):
         for kolom in range(10):
             coordinaat = f"{kolom_letters[kolom]}{rij + 1}"
-            knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1,command=lambda c=coordinaat: knop_geklikt(c))
+            knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
+            knop.config(command=lambda vakje=coordinaat, k=knop: knop_geklikt(vakje, k)) #Dit stukje hebben we gemaakt met hulp van chatGPT, het geeft de knop en de coordinaten van de knop terug wanneer er op geklikt word. Omdat er verwezen wordt naar de knop zelf, staat de command bij .config ipv bij de button zelf.
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
 
-def knop_geklikt(coordinaat):
-    print(f"je klikte op: {coordinaat}")
-
+def knop_geklikt(coordinaat,knop):
+    print("je klikte op:", coordinaat)
+    knop.config(bg="red",state="disabled") #De kleur veranderd, en nu kan de knop ook niet nog een keer ingedrukt worden.
+    
 def maak_leeg_bord(grootte): #Niet nodig?
     bord = []
     print("  "," 1 ","  2  ","  3  ","  4  ","  5  ",)
