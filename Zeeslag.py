@@ -1,8 +1,8 @@
 #GLOBALE VARIABELEN
 from tkinter import *
 venster = Tk()
-# venster.geometry("800x800")
-venster.attributes('-fullscreen', True)
+venster.geometry("800x800")
+# venster.attributes('-fullscreen', True)
 venster.wm_title("Zeeslagje")
 venster.config(bg="lightblue")
 
@@ -25,8 +25,12 @@ def maak_gui_bord():
     # Maakt een 10x10 raster van knoppen
     for rij in range(10):
         for kolom in range(10):
-            knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
+            coordinaat = f"{kolom_letters[kolom]}{rij + 1}"
+            knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1,command=lambda c=coordinaat: knop_geklikt(c))
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
+
+def knop_geklikt(coordinaat):
+    print(f"je klikte op: {coordinaat}")
 
 def maak_leeg_bord(grootte): #Niet nodig?
     bord = []
@@ -37,10 +41,10 @@ def maak_leeg_bord(grootte): #Niet nodig?
         print(aantal+1,rij, end="")
         # print(aantal, end="")
         print()
-
     return bord
 
 #HOOFDPROGRAMMA
+# maak_leeg_bord(5)
 maak_gui_bord()
 
 venster.mainloop()

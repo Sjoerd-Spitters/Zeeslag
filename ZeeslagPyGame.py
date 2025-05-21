@@ -9,7 +9,7 @@ ACHTERGROND_KLEUR = (173, 216, 230)  # Lichtblauw
 LIJN_KLEUR = (0, 0, 0)               # Zwart
 TEKST_KLEUR = (0, 0, 0)
 VAK_GROOTTE = 40
-    RAND = 50  # Ruimte voor labels
+RAND = 50  # Ruimte voor labels
 
 # Venstergrootte (10 vakken van 40 + randen)
 VENSTER_BREEDTE = VAK_GROOTTE * 10 + RAND
