@@ -5,7 +5,7 @@ venster = Tk()
 # venster.attributes('-fullscreen', True)
 venster.wm_title("Zeeslagje")
 venster.config(bg="lightblue")
-
+bord = []
 #FUNCTIEDEFINITIES
 
 #Gemaakt door:Sjoerd
@@ -33,20 +33,33 @@ def maak_gui_bord():
 def knop_geklikt(coordinaat,knop):
     print("je klikte op:", coordinaat)
     knop.config(bg="red",state="disabled") #De kleur veranderd, en nu kan de knop ook niet nog een keer ingedrukt worden.
+    print(knop)
     
-def maak_leeg_bord(grootte): #Niet nodig?
-    bord = []
-    print("  "," 1 ","  2  ","  3  ","  4  ","  5  ",)
-    for aantal in range(grootte):
-        rij = ['~'] * grootte
+def maak_leeg_bord(): #Niet nodig?
+    for aantal in range(10):
+        rij = ['~'] * 10
         bord.append(rij)
-        print(aantal+1,rij, end="")
-        # print(aantal, end="")
+        print(rij, end="")
         print()
     return bord
 
+def boten_plaatsten(rij,kolom):
+    bord[rij][kolom] = "x"
+    print()
+    print()
+    for rij in range(10):
+        print(bord[rij])
+    return bord
+
+def boot_plaats_checken():
+    for rij_index in range(len(bord)):
+        for kolom_index in range(len(bord[rij_index])):
+            if bord[rij_index][kolom_index] == "x":
+                print("Gevonden op rij", rij_index, "kolom", kolom_index)
 #HOOFDPROGRAMMA
-# maak_leeg_bord(5)
+maak_leeg_bord()
 maak_gui_bord()
+boten_plaatsten(6,9)
+boot_plaats_checken()
 
 venster.mainloop()
