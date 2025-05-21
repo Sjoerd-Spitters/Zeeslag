@@ -8,7 +8,7 @@ venster.config(bg="lightblue")
 
 #FUNCTIEDEFINITIES
 
-#Door Sjoerd
+#Gemaakt door:Sjoerd
 def maak_gui_bord():
     #Eerst een leeg hokje
     lege_label = Label(venster, width=4, height=2, bg="lightblue")
@@ -28,7 +28,7 @@ def maak_gui_bord():
             knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
 
-def maak_leeg_bord(grootte): #Niet nodig
+def maak_leeg_bord(grootte): #Niet nodig?
     bord = []
     print("  "," 1 ","  2  ","  3  ","  4  ","  5  ",)
     for aantal in range(grootte):
