@@ -22,7 +22,7 @@ def maak_gui_bord():
     for rij in range(1,11):
         rij_label = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
         rij_label.grid(row=rij, column=0)
-    # Maakt een 10x10 raster van knoppen
+    # Maakt een 10x10 raster van knoppen en geeft informatie bij het klikken van een knopje
     for rij in range(10):
         for kolom in range(10):
             coordinaat = f"{kolom_letters[kolom]}{rij + 1}"
@@ -33,9 +33,16 @@ def maak_gui_bord():
 def knop_geklikt(coordinaat,knop):
     print("je klikte op:", coordinaat)
     knop.config(bg="red",state="disabled") #De kleur veranderd, en nu kan de knop ook niet nog een keer ingedrukt worden.
-    print(knop)
+    vakNummer = str(coordinaat)
+    #Dit stukje zet de coordinaat om naar een rij en kolomwaarde, om het te kunnen gebruiken in de 2D versie van het spel
+    kolomLetter=vakNummer[0]
+    rijWaardeVakje=vakNummer[1:]
+    kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
+    boten_plaatsten(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1) #Dit zet een kruisje 'x' op de plek waar geklikt is.
     
-def maak_leeg_bord(): #Niet nodig?
+
+
+def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
     for aantal in range(10):
         rij = ['~'] * 10
         bord.append(rij)
@@ -43,23 +50,28 @@ def maak_leeg_bord(): #Niet nodig?
         print()
     return bord
 
-def boten_plaatsten(rij,kolom):
-    bord[rij][kolom] = "x"
-    print()
-    print()
+def boten_plaatsten(rij,kolom): #Zet de boten neer 
+    if boot_plaats_checken(rij,kolom):
+        bord[rij][kolom] = "x"
+    else:
+        print("Je mag hier geen kruisje plaatsen")
     for rij in range(10):
         print(bord[rij])
     return bord
 
-def boot_plaats_checken():
-    for rij_index in range(len(bord)):
-        for kolom_index in range(len(bord[rij_index])):
+def boot_plaats_checken(rij,kolom):
+    for rij_index in range(rij - 1, rij + 2):
+        for kolom_index in range(kolom - 1, kolom + 2):
             if bord[rij_index][kolom_index] == "x":
-                print("Gevonden op rij", rij_index, "kolom", kolom_index)
+                return False
+    return True
+    # for rij_index in range(len(bord)):
+    #     for kolom_index in range(len(bord[rij_index])):
+    #         if bord[rij_index][kolom_index] == "x":
+    #             print("Gevonden op rij", rij_index, "kolom", kolom_index)
 #HOOFDPROGRAMMA
 maak_leeg_bord()
 maak_gui_bord()
-boten_plaatsten(6,9)
-boot_plaats_checken()
+
 
 venster.mainloop()
