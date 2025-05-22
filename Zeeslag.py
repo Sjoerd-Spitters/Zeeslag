@@ -19,9 +19,9 @@ def maak_gui_bord():
         label = Label(venster,text=kolom_letters[kolom],width=4, height=2, bg="lightblue",font=("Helvetica",14,"bold"))
         label.grid(row=0, column=kolom+1)
     #Dit stukje geeft de rijen weer:
-    for rij in range(1,11):
-        rij_label = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
-        rij_label.grid(row=rij, column=0)
+    for rij in range(10):
+        rij_label = Label(venster,text=str(rij+1),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
+        rij_label.grid(row=rij+1, column=0)
     # Maakt een 10x10 raster van knoppen
     for rij in range(10):
         for kolom in range(10):
