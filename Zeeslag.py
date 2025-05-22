@@ -65,13 +65,13 @@ def boten_plaatsten(rij,kolom): #Zet de boten neer
 def boot_plaats_checken(rij,kolom):
     for rij_index in range(rij - 1, rij + 2): #Dit loopt door alle vakjes om het geklikte vakje en als er al wat zit, word er niets geplaatst
         for kolom_index in range(kolom - 1, kolom + 2):
-            if bord[rij_index][kolom_index] == "x":
-                return False
+            if 0 <= rij_index < 10 and 0 <= kolom_index < 10:  # check of binnen grenzen
+                if bord[rij_index][kolom_index] == "x":
+                    return False
     return True
 
 #HOOFDPROGRAMMA
 maak_leeg_bord()
 maak_gui_bord()
-
 
 venster.mainloop()
