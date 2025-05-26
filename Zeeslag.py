@@ -1,5 +1,6 @@
 ###GLOBALE VARIABELEN
 from tkinter import *
+import random
 venster = Tk()
 venster.geometry("900x900")
 venster.wm_title("Zeeslagje")
@@ -55,11 +56,12 @@ def knop_geklikt(coordinaat,knop):
 
 #Gemaakt door:Sjoerd
 def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
-    for aantal in range(10):
+    for _ in range(10): # teller wordt niet gebruikt in de loop dus een naam is onnodig
         rij = ['~'] * 10
         bord.append(rij)
         print(rij, end="")
         print()
+    print() # lege regel printen zodat borden niet aan elkaar worden geplakt.
     return bord
 
 
@@ -103,19 +105,45 @@ def boot_plaats_checken(rij,kolom, lengte, richting):
         if not (0 <= r < 10 and 0 <= c < 10): #controle of de boot past op het raster
             return False
 
-        for rij_index in range(rij - 1, rij + 2): #Dit loopt door alle vakjes om het geklikte vakje en als er al wat zit, word er niets geplaatst
-            for kolom_index in range(kolom - 1, kolom + 2): 
-                if 0 <= rij_index < 10 and 0 <= kolom_index < 10:  # checkt of de checker binnen grenzen aan het kijken is, dit voorkomt foutcodes
-                    if bord[rij_index][kolom_index] == "x":
+        for rij_index in range(-1, 2): #Dit loopt door alle vakjes om het vakje wat nu wordt behandeld en als er al wat omheen zit, word er niets geplaatst
+            for kolom_index in range(-1,2): 
+                buur_rij = r + rij_index 
+                buur_kolom = c + kolom_index
+                if 0 <= buur_rij < 10 and 0 <= buur_kolom < 10:  # checkt of de checker binnen grenzen aan het kijken is, dit voorkomt foutcodes
+                    if bord[buur_rij][buur_kolom] == "x":
                         return False
     return True
 
-#HOOFDPROGRAMMA
+def plaats_alle_boten_automatisch():
+    for naam in boten_info: 
+        lengte = boten_info[naam]["lengte"]
+        aantal = boten_info[naam]["aantal"]
+
+        for _ in range(aantal): #telller wordt niet gebruikt
+            geplaatst = False 
+            while not geplaatst: #de while loop zorgt ervoor dat het plaatsen pas stopt wanneer de boot succesvol is geplaatst
+                rij = random.randint(0, 9) # willekeurige rij van 0 tot 10
+                kolom = random.randint(0, 9) # willekeurige kolom van 0 tot 10
+                richting = random.choice(["horizontaal", "verticaal"]) 
+
+                if boot_plaats_checken(rij, kolom, lengte, richting): #boot moet voldoen aan plaatsingseisen
+                    for i in range(lengte): 
+                        if richting == "horizontaal":
+                            bord[rij][kolom + i] = "x"
+                        else:
+                            bord[rij + i][kolom] = "x"
+                    geplaatst = True
+    for rij in bord:
+        print(rij)
+
+
+###HOOFDPROGRAMMA
 maak_leeg_bord()
+plaats_alle_boten_automatisch()
 maak_gui_bord()
 # boten_plaatsten(3, 1)
-# boten_plaatsten(4,1)
+# boten_plaatsten(4,1) kan niet want dan zou de boot naast een ander komen te liggen.
 # boten_plaatsten(6,6)
-# boten_plaatsten(9,9) kan niet
+# boten_plaatsten(9,9) kan niet want dan zou de boot buiten veld komen.
 
 venster.mainloop()
