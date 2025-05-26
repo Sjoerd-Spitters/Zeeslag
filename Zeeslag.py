@@ -1,12 +1,23 @@
-#GLOBALE VARIABELEN
+###GLOBALE VARIABELEN
 from tkinter import *
 venster = Tk()
-# venster.geometry("800x800")
-# venster.attributes('-fullscreen', True)
+venster.geometry("900x900")
 venster.wm_title("Zeeslagje")
 venster.config(bg="lightblue")
 bord = []
-#FUNCTIEDEFINITIES
+
+geselecteerde_boot = "patrouilleschip"
+
+geselecteerde_richting = "horizontaal"  # of "verticaal"
+ 
+boten_info = {
+    "vliegdekschip": {"lengte": 6, "aantal": 1},
+    "slagschip": {"lengte": 4, "aantal": 2},
+    "onderzeeër": {"lengte": 3, "aantal": 1},
+    "patrouilleschip": {"lengte": 2, "aantal": 4}
+}
+
+###FUNCTIEDEFINITIES
 
 #Gemaakt door:Sjoerd
 def maak_gui_bord():
@@ -51,27 +62,60 @@ def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
         print()
     return bord
 
-#Gemaakt door:Sjoerd
-def boten_plaatsten(rij,kolom): #Zet de boten neer 
-    if boot_plaats_checken(rij,kolom):
-        bord[rij][kolom] = "x"
-    else:
-        print("Je mag hier geen kruisje plaatsen")
-    for rij in range(10):
-        print(bord[rij])
-    return bord
 
-#Gemaakt door:Sjoerd
-def boot_plaats_checken(rij,kolom):
-    for rij_index in range(rij - 1, rij + 2): #Dit loopt door alle vakjes om het geklikte vakje en als er al wat zit, word er niets geplaatst
-        for kolom_index in range(kolom - 1, kolom + 2):
-            if 0 <= rij_index < 10 and 0 <= kolom_index < 10:  # check of binnen grenzen
-                if bord[rij_index][kolom_index] == "x":
-                    return False
+#gemaakt door: Sjoerd en Rens
+def boten_plaatsten(rij, kolom): #zet de boten neer 
+    lengte = boten_info[geselecteerde_boot]["lengte"]
+    print( "de lengte is:", lengte ,type(lengte))
+    richting = geselecteerde_richting
+    print("de richting is:", richting)
+    
+    if not boot_plaats_checken(rij, kolom, lengte, richting): #checkt of de boot geplaatst mag worden, zo niet stopt de functie direct
+        print("Je kunt hier geen boot plaatsen.")
+        return
+    
+    for increment in range(lengte): #dit gedeelte plaatst de boot 
+      if richting == "verticaal":
+          r = rij + increment
+          c = kolom
+      else:  # horizontaal
+          r = rij
+          c = kolom + increment
+      bord[r][c] = "x" #een boot plekje is een "x"
+    
+    boten_info[geselecteerde_boot]["aantal"] -= 1 # laat de speler zien hoeveel boten er nog van deze soort boot geplaatst kunnen worden
+    print(geselecteerde_boot , 'is geplaatst. je hebt nog:', boten_info[geselecteerde_boot]['aantal'] , "van deze boten over." )
+    
+    for rij in bord:
+        print(rij)
+
+#Gemaakt door:Sjoerd en Rens
+def boot_plaats_checken(rij,kolom, lengte, richting):
+    for increment in range(lengte):
+    # Bepaal de juiste rij en kolom op basis van richting
+        if richting == "verticaal":
+            r = rij + increment
+            c = kolom
+        else:  # de richting is dus horizontaal
+            r = rij
+            c = kolom + increment
+
+        if not (0 <= r < 10 and 0 <= c < 10): #controle of de boot past op het raster
+            return False
+
+        for rij_index in range(rij - 1, rij + 2): #Dit loopt door alle vakjes om het geklikte vakje en als er al wat zit, word er niets geplaatst
+            for kolom_index in range(kolom - 1, kolom + 2): 
+                if 0 <= rij_index < 10 and 0 <= kolom_index < 10:  # checkt of de checker binnen grenzen aan het kijken is, dit voorkomt foutcodes
+                    if bord[rij_index][kolom_index] == "x":
+                        return False
     return True
 
 #HOOFDPROGRAMMA
 maak_leeg_bord()
 maak_gui_bord()
+# boten_plaatsten(3, 1)
+# boten_plaatsten(4,1)
+# boten_plaatsten(6,6)
+# boten_plaatsten(9,9) kan niet
 
 venster.mainloop()
