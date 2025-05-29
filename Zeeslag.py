@@ -7,15 +7,15 @@ venster.wm_title("Zeeslagje")
 venster.config(bg="lightblue")
 bord = []
 
-geselecteerde_boot = "patrouilleschip"
+geselecteerde_boot = "Little Fuck"
 
 geselecteerde_richting = "horizontaal"  # of "verticaal"
  
 boten_info = {
-    "vliegdekschip": {"lengte": 6, "aantal": 1},
-    "slagschip": {"lengte": 4, "aantal": 2},
-    "onderzeeër": {"lengte": 3, "aantal": 1},
-    "patrouilleschip": {"lengte": 2, "aantal": 4}
+    "Wang Jangler": {"lengte": 6, "aantal": 1},
+    "Sloop Doggy Dog": {"lengte": 4, "aantal": 1},
+    "torpedo jager": {"lengte": 3, "aantal": 2},
+    "Good Personality": {"lengte": 2, "aantal": 2}
 }
 
 ###FUNCTIEDEFINITIES
@@ -37,7 +37,7 @@ def maak_gui_bord():
     # Maakt een 10x10 raster van knoppen en geeft informatie bij het klikken van een knopje
     for rij in range(10):
         for kolom in range(10):
-            coordinaat = f"{kolom_letters[kolom]}{rij + 1}"
+            coordinaat = kolom_letters[kolom] + str(rij + 1)
             knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop.config(command=lambda vakje=coordinaat, k=knop: knop_geklikt(vakje, k)) #Dit stukje hebben we gemaakt met hulp van chatGPT, het geeft de knop en de coordinaten van de knop terug wanneer er op geklikt word. Omdat er verwezen wordt naar de knop zelf, staat de command bij .config ipv bij de button zelf.
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
@@ -45,14 +45,25 @@ def maak_gui_bord():
 #Gemaakt door:Iedereen
 def knop_geklikt(coordinaat,knop):
     print("je klikte op:", coordinaat)
-    knop.config(bg="red",state="disabled") #De kleur veranderd, en nu kan de knop ook niet nog een keer ingedrukt worden.
+    
+    # knop.config(bg="red",state="disabled") #De kleur veranderd, en nu kan de knop ook niet nog een keer ingedrukt worden.
     vakNummer = str(coordinaat)
     #Dit stukje zet de coordinaat om naar een rij en kolomwaarde, om het te kunnen gebruiken in de 2D versie van het spel
     kolomLetter=vakNummer[0]
     rijWaardeVakje=vakNummer[1:]
     kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
-    boten_plaatsten(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1) #Dit zet een kruisje 'x' op de plek waar geklikt is.
-    
+    schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop) #Dit zet een kruisje 'x' op de plek waar geklikt is.
+    ##########################################
+
+def schot_checken(rij,kolom,knop):
+
+    print("rij:",rij,"kolom:",kolom)
+    if bord[rij][kolom] == "x":
+        print("Raak")
+        knop.config(bg="red",state="disabled")
+    else:
+        print("mis")
+        knop.config(bg="white",state ="disabled")
 
 #Gemaakt door:Sjoerd
 def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
@@ -78,12 +89,12 @@ def boten_plaatsten(rij, kolom): #zet de boten neer
     
     for increment in range(lengte): #dit gedeelte plaatst de boot 
       if richting == "verticaal":
-          r = rij + increment
-          c = kolom
+          r = rij + increment 
+          k = kolom
       else:  # horizontaal
           r = rij
-          c = kolom + increment
-      bord[r][c] = "x" #een boot plekje is een "x"
+          k = kolom + increment
+      bord[r][k] = "x" #een boot plekje is een "x"
     
     boten_info[geselecteerde_boot]["aantal"] -= 1 # laat de speler zien hoeveel boten er nog van deze soort boot geplaatst kunnen worden
     print(geselecteerde_boot , 'is geplaatst. je hebt nog:', boten_info[geselecteerde_boot]['aantal'] , "van deze boten over." )
@@ -97,18 +108,18 @@ def boot_plaats_checken(rij,kolom, lengte, richting):
     # Bepaal de juiste rij en kolom op basis van richting
         if richting == "verticaal":
             r = rij + increment
-            c = kolom
+            k = kolom
         else:  # de richting is dus horizontaal
             r = rij
-            c = kolom + increment
+            k = kolom + increment
 
-        if not (0 <= r < 10 and 0 <= c < 10): #controle of de boot past op het raster
+        if not (0 <= r < 10 and 0 <= k < 10): #controle of de boot past op het raster
             return False
 
         for rij_index in range(-1, 2): #Dit loopt door alle vakjes om het vakje wat nu wordt behandeld en als er al wat omheen zit, word er niets geplaatst
             for kolom_index in range(-1,2): 
                 buur_rij = r + rij_index 
-                buur_kolom = c + kolom_index
+                buur_kolom = k + kolom_index
                 if 0 <= buur_rij < 10 and 0 <= buur_kolom < 10:  # checkt of de checker binnen grenzen aan het kijken is, dit voorkomt foutcodes
                     if bord[buur_rij][buur_kolom] == "x":
                         return False
