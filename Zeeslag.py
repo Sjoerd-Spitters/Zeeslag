@@ -7,17 +7,17 @@ venster.wm_title("Zeeslagje")
 venster.config(bg="lightblue")
 bord = []
 
-geselecteerde_boot = "Little Fuck"
-
+geselecteerde_boot = "Good Personality"
 geselecteerde_richting = "horizontaal"  # of "verticaal"
  
 boten_info = {
     "Wang Jangler": {"lengte": 6, "aantal": 1},
-    "Sloop Doggy Dog": {"lengte": 4, "aantal": 1},
-    "torpedo jager": {"lengte": 3, "aantal": 2},
+    "Sloop Doggy Dog": {"lengte": 4, "aantal": 2},
+    "torpedo jager": {"lengte": 3, "aantal": 3},
     "Good Personality": {"lengte": 2, "aantal": 2}
 }
 
+boten_lijst = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
 ###FUNCTIEDEFINITIES
 
 #Gemaakt door:Sjoerd
@@ -44,7 +44,7 @@ def maak_gui_bord():
 
 #Gemaakt door:Iedereen
 def knop_geklikt(coordinaat,knop):
-    print("je klikte op:", coordinaat)
+    # print("je klikte op:", coordinaat) ########
     
     # knop.config(bg="red",state="disabled") #De kleur veranderd, en nu kan de knop ook niet nog een keer ingedrukt worden.
     vakNummer = str(coordinaat)
@@ -52,18 +52,35 @@ def knop_geklikt(coordinaat,knop):
     kolomLetter=vakNummer[0]
     rijWaardeVakje=vakNummer[1:]
     kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
-    schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop) #Dit zet een kruisje 'x' op de plek waar geklikt is.
+    schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop) 
     ##########################################
 
 def schot_checken(rij,kolom,knop):
 
-    print("rij:",rij,"kolom:",kolom)
+    # print("rij:",rij,"kolom:",kolom) ########
     if bord[rij][kolom] == "x":
-        print("Raak")
+        print("Raak!")
         knop.config(bg="red",state="disabled")
+        #gemaakt door: Rens
+        geraakt_vakje = (kolom, rij) #dit maakt de code makkelijker te lezen
+        for boot in boten_lijst: #boot is een index in de lijst en dus een dictionary
+            if geraakt_vakje in boot["coordinaten"] and geraakt_vakje not in boot["geraakt"]: 
+                boot["geraakt"].append(geraakt_vakje)
+                print(boot['naam'],  "is geraakt!")
+
+                if len(boot["geraakt"]) == boot["lengte"]: #als boot[geraakt] net zo veel veel geraakte vakjes bevat als de lengte van de boot is deze gezonken
+                    print(boot['naam'],  "is gezonken!")
+                    boot["gezonken"] = True #de boot wordt als gezonken opgeslagen
+          
     else:
-        print("mis")
+        print("Mis!")
         knop.config(bg="white",state ="disabled")
+
+    alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst)
+    if alle_boten_gezonken:
+        print("Alle boten zijn gezonken! Je hebt gewonnen!")
+        spel_eindigen()
+        
 
 #Gemaakt door:Sjoerd
 def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
@@ -87,14 +104,14 @@ def boten_plaatsten(rij, kolom): #zet de boten neer
         print("Je kunt hier geen boot plaatsen.")
         return
     
-    for increment in range(lengte): #dit gedeelte plaatst de boot 
-      if richting == "verticaal":
-          r = rij + increment 
-          k = kolom
-      else:  # horizontaal
-          r = rij
-          k = kolom + increment
-      bord[r][k] = "x" #een boot plekje is een "x"
+    for i in range(lengte): #dit gedeelte plaatst de boot 
+      if richting == "horizontaal":
+        ver = rij
+        hor = kolom + i
+    else: #richting is verticaal
+        ver = rij + i
+        hor = kolom
+    bord[ver][hor] = "x"
     
     boten_info[geselecteerde_boot]["aantal"] -= 1 # laat de speler zien hoeveel boten er nog van deze soort boot geplaatst kunnen worden
     print(geselecteerde_boot , 'is geplaatst. je hebt nog:', boten_info[geselecteerde_boot]['aantal'] , "van deze boten over." )
@@ -104,22 +121,23 @@ def boten_plaatsten(rij, kolom): #zet de boten neer
 
 #Gemaakt door:Sjoerd en Rens
 def boot_plaats_checken(rij,kolom, lengte, richting):
-    for increment in range(lengte):
+    for i in range(lengte):
     # Bepaal de juiste rij en kolom op basis van richting
-        if richting == "verticaal":
-            r = rij + increment
-            k = kolom
-        else:  # de richting is dus horizontaal
-            r = rij
-            k = kolom + increment
+        if richting == "horizontaal":
+            ver = rij
+            hor = kolom + i
 
-        if not (0 <= r < 10 and 0 <= k < 10): #controle of de boot past op het raster
+        else: #richting is verticaal
+            ver = rij + i
+            hor = kolom
+
+        if not (0 <= ver < 10 and 0 <= hor < 10): #controle of de boot past op het raster
             return False
 
         for rij_index in range(-1, 2): #Dit loopt door alle vakjes om het vakje wat nu wordt behandeld en als er al wat omheen zit, word er niets geplaatst
             for kolom_index in range(-1,2): 
-                buur_rij = r + rij_index 
-                buur_kolom = k + kolom_index
+                buur_rij = ver + rij_index 
+                buur_kolom = hor + kolom_index
                 if 0 <= buur_rij < 10 and 0 <= buur_kolom < 10:  # checkt of de checker binnen grenzen aan het kijken is, dit voorkomt foutcodes
                     if bord[buur_rij][buur_kolom] == "x":
                         return False
@@ -138,21 +156,38 @@ def plaats_alle_boten_automatisch():
                 richting = random.choice(["horizontaal", "verticaal"]) 
 
                 if boot_plaats_checken(rij, kolom, lengte, richting): #boot moet voldoen aan plaatsingseisen
-                    for i in range(lengte): 
+                    coordinaten = []
+                    for i in range(lengte): #dit gedeelte plaatst de boten daadwerkelijk
                         if richting == "horizontaal":
-                            bord[rij][kolom + i] = "x"
-                        else:
-                            bord[rij + i][kolom] = "x"
+                            ver = rij
+                            hor = kolom + i
+                        else: #richting is verticaal
+                            ver = rij + i
+                            hor = kolom
+                        bord[ver][hor] = "x"
+                        coordinaten.append((hor, ver)) #coordinaten worden als tuple opgeslagen en niet apart
+                        print(coordinaten)
+                    
+                    boten_lijst.append({"naam": naam,
+                        "lengte": lengte,
+                        "coordinaten": coordinaten,
+                        "geraakt": [],
+                        "gezonken": False})
+                    print(boten_lijst)
                     geplaatst = True
     for rij in bord:
         print(rij)
 
+def spel_eindigen():
+    eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", 
+                         bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
+    eind_melding.grid(row=11, column=0, columnspan=11, pady=20)
 
 ###HOOFDPROGRAMMA
 maak_leeg_bord()
 plaats_alle_boten_automatisch()
 maak_gui_bord()
-# boten_plaatsten(3, 1)
+# boten_plaatsten(3, 1) 
 # boten_plaatsten(4,1) kan niet want dan zou de boot naast een ander komen te liggen.
 # boten_plaatsten(6,6)
 # boten_plaatsten(9,9) kan niet want dan zou de boot buiten veld komen.
