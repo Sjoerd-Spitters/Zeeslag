@@ -1,10 +1,11 @@
 ###GLOBALE VARIABELEN
 from tkinter import *
 import random
-venster = Tk()
-venster.geometry("900x900")
-venster.wm_title("Zeeslagje")
-venster.config(bg="lightblue")
+from PIL import Image, ImageTk,ImageOps
+vensterWelkom = Tk()
+vensterWelkom.wm_title("Welkom")
+vensterWelkom.config(bg="lightblue")
+vensterWelkom.geometry("900x900")
 bord = []
 
 geselecteerde_boot = "Good Personality"
@@ -13,12 +14,33 @@ geselecteerde_richting = "horizontaal"  # of "verticaal"
 boten_info = {
     "Wang Jangler": {"lengte": 6, "aantal": 1},
     "Sloop Doggy Dog": {"lengte": 4, "aantal": 2},
-    "torpedo jager": {"lengte": 3, "aantal": 3},
+    "Torpedo Jager": {"lengte": 3, "aantal": 3},
     "Good Personality": {"lengte": 2, "aantal": 2}
 }
 
 boten_lijst = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
 ###FUNCTIEDEFINITIES
+def welkomstscherm():
+    achtergrond_afbeelding = Image.open("achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = achtergrond_afbeelding.resize((900, 600), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
+    bg = ImageTk.PhotoImage(achtergrond_afbeelding)
+    achtergrond_label = Label(vensterWelkom, image=bg)
+    achtergrond_label.image = bg  # Houd een referentie vast
+    achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
+    beginKnop = Button(vensterWelkom, width=8, height=4, bg="White", command=begin_spel,text="Begin",font=("Helvetica",14,"bold"))
+    beginKnop.place(relx=0.5, rely=0.4,  anchor="center")
+
+def begin_spel():
+    vensterWelkom.destroy()
+    global venster
+    venster = Tk()
+    venster.geometry("900x900")
+    venster.wm_title("Zeeslagje")
+    venster.config(bg="lightblue")
+    maak_leeg_bord()
+    plaats_alle_boten_automatisch()
+    maak_gui_bord()
+    venster.mainloop()
 
 #Gemaakt door:Sjoerd
 def maak_gui_bord():
@@ -81,7 +103,6 @@ def schot_checken(rij,kolom,knop):
         print("Alle boten zijn gezonken! Je hebt gewonnen!")
         spel_eindigen()
         
-
 #Gemaakt door:Sjoerd
 def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
     for _ in range(10): # teller wordt niet gebruikt in de loop dus een naam is onnodig
@@ -91,7 +112,6 @@ def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
         print()
     print() # lege regel printen zodat borden niet aan elkaar worden geplakt.
     return bord
-
 
 #gemaakt door: Sjoerd en Rens
 def boten_plaatsten(rij, kolom): #zet de boten neer 
@@ -179,17 +199,20 @@ def plaats_alle_boten_automatisch():
         print(rij)
 
 def spel_eindigen():
+    venster = Tk()
     eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", 
                          bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
     eind_melding.grid(row=11, column=0, columnspan=11, pady=20)
 
+
 ###HOOFDPROGRAMMA
-maak_leeg_bord()
-plaats_alle_boten_automatisch()
-maak_gui_bord()
+welkomstscherm()
+# maak_leeg_bord()
+# plaats_alle_boten_automatisch()
+# maak_gui_bord()
 # boten_plaatsten(3, 1) 
 # boten_plaatsten(4,1) kan niet want dan zou de boot naast een ander komen te liggen.
 # boten_plaatsten(6,6)
 # boten_plaatsten(9,9) kan niet want dan zou de boot buiten veld komen.
 
-venster.mainloop()
+vensterWelkom.mainloop()
