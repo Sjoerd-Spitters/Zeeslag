@@ -2,10 +2,13 @@
 from tkinter import *
 import random
 from PIL import Image, ImageTk,ImageOps
+
 vensterWelkom = Tk()
+breedte = vensterWelkom.winfo_screenwidth()
+hoogte = vensterWelkom.winfo_screenheight()
 vensterWelkom.wm_title("Welkom")
 vensterWelkom.config(bg="lightblue")
-vensterWelkom.geometry("900x900")
+vensterWelkom.geometry(str(breedte) + "x" + str(hoogte))
 bord = []
 
 geselecteerde_boot = "Good Personality"
@@ -13,16 +16,16 @@ geselecteerde_richting = "horizontaal"  # of "verticaal"
  
 boten_info = {
     "Wang Jangler": {"lengte": 6, "aantal": 1},
-    "Sloop Doggy Dog": {"lengte": 4, "aantal": 2},
-    "Torpedo Jager": {"lengte": 3, "aantal": 3},
-    "Good Personality": {"lengte": 2, "aantal": 2}
+    "Sloop Doggy Dog": {"lengte": 4, "aantal": 1},
+    "Torpedo Jager": {"lengte": 3, "aantal": 1},
+    "Good Personality": {"lengte": 2, "aantal": 1}
 }
 
 boten_lijst = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
 ###FUNCTIEDEFINITIES
 def welkomstscherm():
-    achtergrond_afbeelding = Image.open("achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
-    achtergrond_afbeelding = achtergrond_afbeelding.resize((900, 600), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
+    achtergrond_afbeelding = Image.open("Zeeslag/achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(vensterWelkom, image=bg)
     achtergrond_label.image = bg  # Houd een referentie vast
@@ -34,9 +37,15 @@ def begin_spel():
     vensterWelkom.destroy()
     global venster
     venster = Tk()
-    venster.geometry("900x900")
+    venster.geometry(str(breedte) + "x" + str(hoogte))
     venster.wm_title("Zeeslagje")
     venster.config(bg="lightblue")
+    achtergrond_afbeelding = Image.open("Zeeslag/achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
+    bg = ImageTk.PhotoImage(achtergrond_afbeelding)
+    achtergrond_label = Label(venster, image=bg)
+    achtergrond_label.image = bg  # Houd een referentie vast
+    achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
     maak_leeg_bord()
     plaats_alle_boten_automatisch()
     maak_gui_bord()
@@ -199,7 +208,7 @@ def plaats_alle_boten_automatisch():
         print(rij)
 
 def spel_eindigen():
-    venster = Tk()
+    global venster
     eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", 
                          bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
     eind_melding.grid(row=11, column=0, columnspan=11, pady=20)
