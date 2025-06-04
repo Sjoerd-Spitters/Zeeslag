@@ -18,7 +18,7 @@ boten_info = {
     "Wang Jangler": {"lengte": 6, "aantal": 1},
     "Sloop Doggy Dog": {"lengte": 4, "aantal": 1},
     "Torpedo Jager": {"lengte": 3, "aantal": 2},
-    "Good Personality": {"lengte": 2, "aantal": 2}
+    "Good Personality": {"lengte": 2, "aantal":1 }
 }
 
 boten_lijst = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
