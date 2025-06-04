@@ -17,20 +17,27 @@ geselecteerde_richting = "horizontaal"  # of "verticaal"
 boten_info = {
     "Wang Jangler": {"lengte": 6, "aantal": 1},
     "Sloop Doggy Dog": {"lengte": 4, "aantal": 1},
-    "Torpedo Jager": {"lengte": 3, "aantal": 1},
-    "Good Personality": {"lengte": 2, "aantal": 1}
+    "Torpedo Jager": {"lengte": 3, "aantal": 2},
+    "Good Personality": {"lengte": 2, "aantal": 2}
 }
 
 boten_lijst = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
 ###FUNCTIEDEFINITIES
 def welkomstscherm():
-    achtergrond_afbeelding = Image.open("Zeeslag/achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = Image.open("achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
     achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(vensterWelkom, image=bg)
     achtergrond_label.image = bg  # Houd een referentie vast
     achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
-    beginKnop = Button(vensterWelkom, width=8, height=4, bg="White", command=begin_spel,text="Begin",font=("Helvetica",14,"bold"))
+
+    knop_plaatje = Image.open("startknop.png")  # Voeg hier jouw knop-afbeelding in
+    knop_plaatje = knop_plaatje.resize((150, 120), Image.Resampling.LANCZOS)
+    startknop_img = ImageTk.PhotoImage(knop_plaatje)
+
+    
+    beginKnop = Button(vensterWelkom, image=startknop_img, command=begin_spel)
+    beginKnop.image = startknop_img
     beginKnop.place(relx=0.5, rely=0.4,  anchor="center")
 
 def begin_spel():
@@ -40,7 +47,7 @@ def begin_spel():
     venster.geometry(str(breedte) + "x" + str(hoogte))
     venster.wm_title("Zeeslagje")
     venster.config(bg="lightblue")
-    achtergrond_afbeelding = Image.open("Zeeslag/achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = Image.open("achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
     achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(venster, image=bg)
