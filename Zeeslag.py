@@ -32,11 +32,11 @@ def welkomstscherm():
     achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
 
     knop_plaatje = Image.open("startknop.png")  # Voeg hier jouw knop-afbeelding in
-    knop_plaatje = knop_plaatje.resize((150, 120), Image.Resampling.LANCZOS)
+    knop_plaatje = knop_plaatje.resize((300, 250), Image.Resampling.LANCZOS)
     startknop_img = ImageTk.PhotoImage(knop_plaatje)
 
     
-    beginKnop = Button(vensterWelkom, image=startknop_img, command=begin_spel)
+    beginKnop = Button(vensterWelkom, image=startknop_img, command=begin_spel, borderwidth=10, highlightthickness=0, bg="grey", activebackground="grey")
     beginKnop.image = startknop_img
     beginKnop.place(relx=0.5, rely=0.4,  anchor="center")
 
