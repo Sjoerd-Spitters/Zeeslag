@@ -32,9 +32,16 @@ def welkomstscherm():
     achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
 
     knop_plaatje = Image.open("startknop.png")  # Voeg hier jouw knop-afbeelding in
-    knop_plaatje = knop_plaatje.resize((300, 250), Image.Resampling.LANCZOS)
+    knop_plaatje = knop_plaatje.resize((200, 150), Image.Resampling.LANCZOS)
     startknop_img = ImageTk.PhotoImage(knop_plaatje)
 
+    zeeslag_afbeelding = Image.open("zeeslag.png")  # Vervang dit met jouw afbeelding
+    zeeslag_afbeelding = zeeslag_afbeelding.resize((750, 150), Image.Resampling.LANCZOS)
+    zeeslag_img = ImageTk.PhotoImage(zeeslag_afbeelding)
+
+    zeeslag_label = Label(vensterWelkom, image=zeeslag_img, bg="lightblue")
+    zeeslag_label.image = zeeslag_img  # Houd een referentie vast
+    zeeslag_label.place(relx=0.5, rely=0.2, anchor="center")
     
     beginKnop = Button(vensterWelkom, image=startknop_img, command=begin_spel, borderwidth=10, highlightthickness=0, bg="grey", activebackground="grey")
     beginKnop.image = startknop_img
@@ -109,6 +116,7 @@ def schot_checken(rij,kolom,knop):
                 if len(boot["geraakt"]) == boot["lengte"]: #als boot[geraakt] net zo veel veel geraakte vakjes bevat als de lengte van de boot is deze gezonken
                     print(boot['naam'],  "is gezonken!")
                     boot["gezonken"] = True #de boot wordt als gezonken opgeslagen
+                    
           
     else:
         print("Mis!")
