@@ -1,7 +1,7 @@
 ###GLOBALE VARIABELEN
 from tkinter import *
 import random
-from PIL import Image, ImageTk,ImageOps
+from PIL import Image, ImageTk
 
 vensterWelkom = Tk()
 breedte = vensterWelkom.winfo_screenwidth()
@@ -10,7 +10,7 @@ vensterWelkom.wm_title("Welkom")
 vensterWelkom.config(bg="lightblue")
 vensterWelkom.geometry(str(breedte) + "x" + str(hoogte))
 bord = []
-
+bord_speler2 = []
 geselecteerde_boot = "Good Personality"
 geselecteerde_richting = "horizontaal"  # of "verticaal"
  
@@ -23,30 +23,25 @@ boten_info = {
 
 boten_lijst = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
 ###FUNCTIEDEFINITIES
+
+#Gemaakt door Thomas
 def welkomstscherm():
-    achtergrond_afbeelding = Image.open("achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = Image.open("achtergrond.jpg")  #Maakt de afbeelding open
     achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(vensterWelkom, image=bg)
-    achtergrond_label.image = bg  # Houd een referentie vast
+    achtergrond_label.image = bg
     achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-    knop_plaatje = Image.open("startknop.png")  # Voeg hier jouw knop-afbeelding in
-    knop_plaatje = knop_plaatje.resize((200, 150), Image.Resampling.LANCZOS)
+    knop_plaatje = Image.open("startknop.png") 
+    knop_plaatje = knop_plaatje.resize((300, 250), Image.Resampling.LANCZOS)
     startknop_img = ImageTk.PhotoImage(knop_plaatje)
 
-    zeeslag_afbeelding = Image.open("zeeslag.png")  # Vervang dit met jouw afbeelding
-    zeeslag_afbeelding = zeeslag_afbeelding.resize((750, 150), Image.Resampling.LANCZOS)
-    zeeslag_img = ImageTk.PhotoImage(zeeslag_afbeelding)
-
-    zeeslag_label = Label(vensterWelkom, image=zeeslag_img, bg="lightblue")
-    zeeslag_label.image = zeeslag_img  # Houd een referentie vast
-    zeeslag_label.place(relx=0.5, rely=0.2, anchor="center")
-    
     beginKnop = Button(vensterWelkom, image=startknop_img, command=begin_spel, borderwidth=10, highlightthickness=0, bg="grey", activebackground="grey")
     beginKnop.image = startknop_img
     beginKnop.place(relx=0.5, rely=0.4,  anchor="center")
 
+#Gemaakt door iedereen
 def begin_spel():
     vensterWelkom.destroy()
     global venster
@@ -60,7 +55,7 @@ def begin_spel():
     achtergrond_label = Label(venster, image=bg)
     achtergrond_label.image = bg  # Houd een referentie vast
     achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
-    maak_leeg_bord()
+    maak_lege_borden()
     plaats_alle_boten_automatisch()
     maak_gui_bord()
     venster.mainloop()
@@ -75,34 +70,51 @@ def maak_gui_bord():
     for kolom in range(10):
         label = Label(venster,text=kolom_letters[kolom],width=4, height=2, bg="lightblue",font=("Helvetica",14,"bold"))
         label.grid(row=0, column=kolom+1)
+        label2 = Label(venster,text=kolom_letters[kolom],width=4, height=2, bg="lightblue",font=("Helvetica",14,"bold"))
+        label2.grid(row=0, column=kolom+13)        
     #Dit stukje geeft de rijen weer:
     for rij in range(1,11):
         rij_label = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
         rij_label.grid(row=rij, column=0)
+        spacer = Label(venster,width=4,height=2,bg="black")
+        spacer.grid(row=rij,column=11)
+        spacer2 = Label(venster,width=4,height=2,bg="black")
+        spacer2.grid(row=rij,column=12)
     # Maakt een 10x10 raster van knoppen en geeft informatie bij het klikken van een knopje
     for rij in range(10):
         for kolom in range(10):
-            coordinaat = kolom_letters[kolom] + str(rij + 1)
+            coordinaat1 = kolom_letters[kolom] + str(rij + 1)
+            coordinaat2=  kolom_letters[kolom] + str(rij + 13)
             knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
-            knop.config(command=lambda vakje=coordinaat, k=knop: knop_geklikt(vakje, k)) #Dit stukje hebben we gemaakt met hulp van chatGPT, het geeft de knop en de coordinaten van de knop terug wanneer er op geklikt word. Omdat er verwezen wordt naar de knop zelf, staat de command bij .config ipv bij de button zelf.
+            knop.config(command=lambda vakje=coordinaat1, k=knop: knop_geklikt(vakje, k)) #Dit stukje hebben we gemaakt met hulp van chatGPT, het geeft de knop en de coordinaten van de knop terug wanneer er op geklikt word. Omdat er verwezen wordt naar de knop zelf, staat de command bij .config ipv bij de button zelf.
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
+            
+            knop2 = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
+            knop2.config(command=lambda vakje=coordinaat2, k=knop2: knop_geklikt2(vakje, k))
+            knop2.grid(row=rij+1, column=kolom+13,padx=1,pady=1)
+            
 
 #Gemaakt door:Iedereen
 def knop_geklikt(coordinaat,knop):
-    # print("je klikte op:", coordinaat) ########
-    
-    # knop.config(bg="red",state="disabled") #De kleur veranderd, en nu kan de knop ook niet nog een keer ingedrukt worden.
     vakNummer = str(coordinaat)
     #Dit stukje zet de coordinaat om naar een rij en kolomwaarde, om het te kunnen gebruiken in de 2D versie van het spel
     kolomLetter=vakNummer[0]
     rijWaardeVakje=vakNummer[1:]
     kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
     schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop) 
-    ##########################################
+    ##########################################Namen van de functies checken
 
+def knop_geklikt2(coordinaat,knop2):
+    vakNummer = str(coordinaat)
+    knop2.config(bg="white")
+    #Dit stukje zet de coordinaat om naar een rij en kolomwaarde, om het te kunnen gebruiken in de 2D versie van het spel
+    kolomLetter=vakNummer[0]
+    rijWaardeVakje=vakNummer[1:]
+    kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
+    schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop2) 
+    ##########################################Namen van de functies checken
+#Gemaakt door Rens en Sjoerd
 def schot_checken(rij,kolom,knop):
-
-    # print("rij:",rij,"kolom:",kolom) ########
     if bord[rij][kolom] == "x":
         print("Raak!")
         knop.config(bg="red",state="disabled")
@@ -112,15 +124,12 @@ def schot_checken(rij,kolom,knop):
             if geraakt_vakje in boot["coordinaten"] and geraakt_vakje not in boot["geraakt"]: 
                 boot["geraakt"].append(geraakt_vakje)
                 print(boot['naam'],  "is geraakt!")
-
                 if len(boot["geraakt"]) == boot["lengte"]: #als boot[geraakt] net zo veel veel geraakte vakjes bevat als de lengte van de boot is deze gezonken
                     print(boot['naam'],  "is gezonken!")
                     boot["gezonken"] = True #de boot wordt als gezonken opgeslagen
-                    
-          
-    else:
+    else: #Niet geraakt, dus er is misgeschoten
         print("Mis!")
-        knop.config(bg="white",state ="disabled")
+        knop.config(bg="white",state ="disabled")#knop wel uitzetten, zodat hij niet nogmaals word ingedrukt
 
     alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst)
     if alle_boten_gezonken:
@@ -128,13 +137,14 @@ def schot_checken(rij,kolom,knop):
         spel_eindigen()
         
 #Gemaakt door:Sjoerd
-def maak_leeg_bord(): #Maakt het bord aan voor de '2D' versie van het spel
+def maak_lege_borden(): #Maakt het bord aan voor de '2D' versie van het spel
     for _ in range(10): # teller wordt niet gebruikt in de loop dus een naam is onnodig
         rij = ['~'] * 10
         bord.append(rij)
-        print(rij, end="")
-        print()
-    print() # lege regel printen zodat borden niet aan elkaar worden geplakt.
+        bord_speler2.append(rij)
+    print(bord)
+    print()
+    print(bord_speler2)
     return bord
 
 #gemaakt door: Sjoerd en Rens
@@ -191,7 +201,6 @@ def plaats_alle_boten_automatisch():
     for naam in boten_info: 
         lengte = boten_info[naam]["lengte"]
         aantal = boten_info[naam]["aantal"]
-
         for _ in range(aantal): #telller wordt niet gebruikt
             geplaatst = False 
             while not geplaatst: #de while loop zorgt ervoor dat het plaatsen pas stopt wanneer de boot succesvol is geplaatst
@@ -231,12 +240,5 @@ def spel_eindigen():
 
 ###HOOFDPROGRAMMA
 welkomstscherm()
-# maak_leeg_bord()
-# plaats_alle_boten_automatisch()
-# maak_gui_bord()
-# boten_plaatsten(3, 1) 
-# boten_plaatsten(4,1) kan niet want dan zou de boot naast een ander komen te liggen.
-# boten_plaatsten(6,6)
-# boten_plaatsten(9,9) kan niet want dan zou de boot buiten veld komen.
 
 vensterWelkom.mainloop()
