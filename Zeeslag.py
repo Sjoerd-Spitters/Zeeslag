@@ -21,7 +21,8 @@ boten_info = {
     "Good Personality": {"lengte": 2, "aantal":1 }
 }
 
-boten_lijst = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
+boten_lijst_1 = [] #hierin komen dictionaries met informatie over waar een boot ligt en of hij is geraakt
+boten_lijst_2 = []
 ###FUNCTIEDEFINITIES
 
 #Gemaakt door Thomas
@@ -78,13 +79,14 @@ def maak_gui_bord():
         rij_label.grid(row=rij, column=0)
         spacer = Label(venster,width=4,height=2,bg="black")
         spacer.grid(row=rij,column=11)
-        spacer2 = Label(venster,width=4,height=2,bg="black")
-        spacer2.grid(row=rij,column=12)
+        rij_label2 = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
+        rij_label2.grid(row=rij, column=12)
+
     # Maakt een 10x10 raster van knoppen en geeft informatie bij het klikken van een knopje
     for rij in range(10):
         for kolom in range(10):
             coordinaat1 = kolom_letters[kolom] + str(rij + 1)
-            coordinaat2=  kolom_letters[kolom] + str(rij + 13)
+            coordinaat2=  kolom_letters[kolom] + str(rij + 1) #Het tweede speelbord start nota bene ook op dezelfde plaats voor de coordinaten
             knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop.config(command=lambda vakje=coordinaat1, k=knop: knop_geklikt(vakje, k)) #Dit stukje hebben we gemaakt met hulp van chatGPT, het geeft de knop en de coordinaten van de knop terug wanneer er op geklikt word. Omdat er verwezen wordt naar de knop zelf, staat de command bij .config ipv bij de button zelf.
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
@@ -99,20 +101,21 @@ def knop_geklikt(coordinaat,knop):
     vakNummer = str(coordinaat)
     #Dit stukje zet de coordinaat om naar een rij en kolomwaarde, om het te kunnen gebruiken in de 2D versie van het spel
     kolomLetter=vakNummer[0]
-    rijWaardeVakje=vakNummer[1:]
+    rijWaardeVakje=vakNummer[1:] #Pakt de rest van de string vakNummer (1: betekent index 1 en de rest daarna) 
+    print("vakNummer:",vakNummer,"coordinaat uit button:",coordinaat,"knop:",knop,"Kolomletter:",kolomLetter,"en rijwaardevakje:",rijWaardeVakje)
     kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
     schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop) 
-    ##########################################Namen van de functies checken
 
 def knop_geklikt2(coordinaat,knop2):
     vakNummer = str(coordinaat)
     knop2.config(bg="white")
     #Dit stukje zet de coordinaat om naar een rij en kolomwaarde, om het te kunnen gebruiken in de 2D versie van het spel
     kolomLetter=vakNummer[0]
-    rijWaardeVakje=vakNummer[1:]
+    rijWaardeVakje=vakNummer[1:] #Pakt de rest van de string vakNummer (1: betekent index 1 en de rest daarna) 
+    print("vakNummer:",vakNummer,"coordinaat uit button:",coordinaat,"knop:",knop2,"Kolomletter:",kolomLetter,"en rijwaardevakje:",rijWaardeVakje)
     kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
-    schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop2) 
-    ##########################################Namen van de functies checken
+    schot_checken_2(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop2) 
+
 #Gemaakt door Rens en Sjoerd
 def schot_checken(rij,kolom,knop):
     if bord[rij][kolom] == "x":
@@ -120,7 +123,7 @@ def schot_checken(rij,kolom,knop):
         knop.config(bg="red",state="disabled")
         #gemaakt door: Rens
         geraakt_vakje = (kolom, rij) #dit maakt de code makkelijker te lezen
-        for boot in boten_lijst: #boot is een index in de lijst en dus een dictionary
+        for boot in boten_lijst_1: #boot is een index in de lijst en dus een dictionary
             if geraakt_vakje in boot["coordinaten"] and geraakt_vakje not in boot["geraakt"]: 
                 boot["geraakt"].append(geraakt_vakje)
                 print(boot['naam'],  "is geraakt!")
@@ -131,28 +134,51 @@ def schot_checken(rij,kolom,knop):
         print("Mis!")
         knop.config(bg="white",state ="disabled")#knop wel uitzetten, zodat hij niet nogmaals word ingedrukt
 
-    alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst)
+    alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst_1)
     if alle_boten_gezonken:
         print("Alle boten zijn gezonken! Je hebt gewonnen!")
         spel_eindigen()
         
+def schot_checken_2(rij,kolom,knop2):
+    # rij = rij-12 ############################
+    print("rijwaarde na schotchecken:", rij)
+    if bord_speler2[rij][kolom] == "x":
+        print("Raak!")
+        knop2.config(bg="red",state="disabled")
+        #gemaakt door: Rens
+        # Dit stuk past de boot lijst aan, zodat het schot wordt geregistreerd.
+        geraakt_vakje = (kolom, rij) #dit maakt de code makkelijker te lezen
+        for boot in boten_lijst_1: #boot is een index in de lijst en dus een dictionary
+            if geraakt_vakje in boot["coordinaten"] and geraakt_vakje not in boot["geraakt"]: 
+                boot["geraakt"].append(geraakt_vakje)
+                print(boot['naam'],  "is geraakt!")
+                if len(boot["geraakt"]) == boot["lengte"]: #als boot[geraakt] net zo veel veel geraakte vakjes bevat als de lengte van de boot is deze gezonken
+                    print(boot['naam'],  "is gezonken!")
+                    boot["gezonken"] = True #de boot wordt als gezonken opgeslagen
+    else: #Niet geraakt, dus er is misgeschoten
+        print("Mis!")
+        knop2.config(bg="white",state ="disabled")#knop wel uitzetten, zodat hij niet nogmaals word ingedrukt
+
+    alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst_1)
+    if alle_boten_gezonken:
+        print("Alle boten zijn gezonken! Je hebt gewonnen!")
+        spel_eindigen()
+
 #Gemaakt door:Sjoerd
 def maak_lege_borden(): #Maakt het bord aan voor de '2D' versie van het spel
     for _ in range(10): # teller wordt niet gebruikt in de loop dus een naam is onnodig
         rij = ['~'] * 10
         bord.append(rij)
-        bord_speler2.append(rij)
-    print(bord)
-    print()
-    print(bord_speler2)
-    return bord
+        rij_bord2 = ['~'] * 10
+        bord_speler2.append(rij_bord2) #Er moet een andere variabele gemaakt worden voor bord 2, omdat ze anders naar hetzelfde refereren. Ik heb dit probleem opgelost met behulp van deepseek.
+    return bord, bord_speler2
 
 #gemaakt door: Sjoerd en Rens
 def boten_plaatsten(rij, kolom): #zet de boten neer 
     lengte = boten_info[geselecteerde_boot]["lengte"]
-    print( "de lengte is:", lengte ,type(lengte))
+    # print( "de lengte is:", lengte ,type(lengte))
     richting = geselecteerde_richting
-    print("de richting is:", richting)
+    # print("de richting is:", richting)
     
     if not boot_plaats_checken(rij, kolom, lengte, richting): #checkt of de boot geplaatst mag worden, zo niet stopt de functie direct
         print("Je kunt hier geen boot plaatsen.")
@@ -217,18 +243,22 @@ def plaats_alle_boten_automatisch():
                         else: #richting is verticaal
                             ver = rij + i
                             hor = kolom
-                        bord[ver][hor] = "x"
+                        bord[ver][hor] = "x" #Zet een "x" neer op elke waarde plek van de boot
                         coordinaten.append((hor, ver)) #coordinaten worden als tuple opgeslagen en niet apart
-                        print(coordinaten)
+                        # print(coordinaten)
                     
-                    boten_lijst.append({"naam": naam,
+                    boten_lijst_1.append({"naam": naam,
                         "lengte": lengte,
                         "coordinaten": coordinaten,
                         "geraakt": [],
                         "gezonken": False})
-                    print(boten_lijst)
+                    # print(boten_lijst_1)
                     geplaatst = True
     for rij in bord:
+        print(rij)
+    print()
+    print()
+    for rij in bord_speler2:
         print(rij)
 
 def spel_eindigen():
