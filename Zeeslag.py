@@ -94,7 +94,6 @@ def maak_gui_bord():
             knop2 = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop2.config(command=lambda vakje=coordinaat2, k=knop2: knop_geklikt2(vakje, k))
             knop2.grid(row=rij+1, column=kolom+13,padx=1,pady=1)
-            
 
 #Gemaakt door:Iedereen
 def knop_geklikt(coordinaat,knop):
@@ -176,9 +175,7 @@ def maak_lege_borden(): #Maakt het bord aan voor de '2D' versie van het spel
 #gemaakt door: Sjoerd en Rens
 def boten_plaatsten(rij, kolom): #zet de boten neer 
     lengte = boten_info[geselecteerde_boot]["lengte"]
-    # print( "de lengte is:", lengte ,type(lengte))
     richting = geselecteerde_richting
-    # print("de richting is:", richting)
     
     if not boot_plaats_checken(rij, kolom, lengte, richting): #checkt of de boot geplaatst mag worden, zo niet stopt de functie direct
         print("Je kunt hier geen boot plaatsen.")
@@ -200,7 +197,7 @@ def boten_plaatsten(rij, kolom): #zet de boten neer
         print(rij)
 
 #Gemaakt door:Sjoerd en Rens
-def boot_plaats_checken(rij,kolom, lengte, richting):
+def boot_plaats_checken(rij,kolom, lengte, richting,bord):
     for i in range(lengte):
     # Bepaal de juiste rij en kolom op basis van richting
         if richting == "horizontaal":
@@ -223,7 +220,8 @@ def boot_plaats_checken(rij,kolom, lengte, richting):
                         return False
     return True
 
-def plaats_alle_boten_automatisch():
+#Gemaakt door: Rens
+def boot_plaats_willekeurig_bepalen(bord,boten_lijst):
     for naam in boten_info: 
         lengte = boten_info[naam]["lengte"]
         aantal = boten_info[naam]["aantal"]
@@ -233,8 +231,8 @@ def plaats_alle_boten_automatisch():
                 rij = random.randint(0, 9) # willekeurige rij van 0 tot 10
                 kolom = random.randint(0, 9) # willekeurige kolom van 0 tot 10
                 richting = random.choice(["horizontaal", "verticaal"]) 
-
-                if boot_plaats_checken(rij, kolom, lengte, richting): #boot moet voldoen aan plaatsingseisen
+                #checken of de boot hier past
+                if boot_plaats_checken(rij, kolom, lengte, richting,bord): #boot moet voldoen aan plaatsingseisen
                     coordinaten = []
                     for i in range(lengte): #dit gedeelte plaatst de boten daadwerkelijk
                         if richting == "horizontaal":
@@ -245,22 +243,23 @@ def plaats_alle_boten_automatisch():
                             hor = kolom
                         bord[ver][hor] = "x" #Zet een "x" neer op elke waarde plek van de boot
                         coordinaten.append((hor, ver)) #coordinaten worden als tuple opgeslagen en niet apart
-                        # print(coordinaten)
-                    
-                    boten_lijst_1.append({"naam": naam,
+                    #Nu nog de info lijst updaten                     
+                    boten_lijst.append({"naam": naam,
                         "lengte": lengte,
                         "coordinaten": coordinaten,
                         "geraakt": [],
                         "gezonken": False})
-                    # print(boten_lijst_1)
                     geplaatst = True
     for rij in bord:
         print(rij)
-    print()
-    print()
-    for rij in bord_speler2:
-        print(rij)
 
+def plaats_alle_boten_automatisch(): #Dit zet de boten automatisch op een willekeurige plek
+    boot_plaats_willekeurig_bepalen(bord,boten_lijst_1)
+    print()
+    print()
+    boot_plaats_willekeurig_bepalen(bord_speler2,boten_lijst_2)
+
+#Gemaakt door: Rens
 def spel_eindigen():
     global venster
     eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", 
