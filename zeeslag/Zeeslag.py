@@ -29,7 +29,7 @@ boten_lijst_2 = []
 #Gemaakt door Thomas
 def welkomstscherm():
     achtergrond_afbeelding = Image.open("zeeslag/achtergrond.jpg")  #Maakt de afbeelding open
-    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  #zorgt ervoor dat het in elk scherm past
+    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(vensterWelkom, image=bg)
     achtergrond_label.image = bg
@@ -44,31 +44,15 @@ def welkomstscherm():
     # beginKnop.image = startknop_img
     # beginKnop.place(relx=0.5, rely=0.4,  anchor="center")
 
-    #singleplayer knop
+
     global sp_knop_img, mp_knop_img
     sp_knop_img = ImageTk.PhotoImage(Image.open("zeeslag/startknop.png").resize((300, 250)))
-    Button(vensterWelkom, image=sp_knop_img, command=lambda: begin_spel("single"), borderwidth=5, bg="grey").place(relx=0.3, rely=0.4, anchor=CENTER)
-    #label met singleplyer er op
-    Button(vensterWelkom, image=sp_knop_img, command=lambda: begin_spel("single"), borderwidth=5, bg="grey").place(relx=0.3, rely=0.4, anchor=CENTER)
-    Label(vensterWelkom, text="Singleplayer", font=("Helvetica", 16, "bold"), bg="lightgrey").place(relx=0.3, rely=0.65, anchor=CENTER)
+    Button(vensterWelkom, image=sp_knop_img, command=lambda: begin_spel("single"), borderwidth=5, bg="lightblue").place(relx=0.4, rely=0.5, anchor=CENTER)
 
     # Multiplayer knop
     mp_knop_img = ImageTk.PhotoImage(Image.open("zeeslag/startknop.png").resize((300, 250)))
-    Button(vensterWelkom, image=mp_knop_img, command=lambda: begin_spel("multi"), borderwidth=5, bg="grey").place(relx=0.7, rely=0.4, anchor=CENTER)
-    
-    # label met multiplayer er op
-    Button(vensterWelkom, image=mp_knop_img, command=lambda: begin_spel("multi"), borderwidth=5, bg="grey").place(relx=0.7, rely=0.4, anchor=CENTER)
-    Label(vensterWelkom, text="Multiplayer", font=("Helvetica", 16, "bold"), bg="lightgrey").place(relx=0.7, rely=0.65, anchor=CENTER)
-        
-    logo_img = Image.open("zeeslag/zeeslaglogo.png")  # vervang dit met jouw bestandsnaam
-    logo_img = logo_img.resize((600, 150))  # pas grootte aan naar wens
-    logo_foto = ImageTk.PhotoImage(logo_img)
+    Button(vensterWelkom, image=mp_knop_img, command=lambda: begin_spel("multi"), borderwidth=5, bg="lightblue").place(relx=0.6, rely=0.5, anchor=CENTER)
 
-    # Bewaar referentie aan afbeelding zodat deze zichtbaar blijft
-    vensterWelkom.titel_afbeelding = logo_foto
-
-    # Voeg afbeelding toe aan het venster
-    Label(vensterWelkom, image=logo_foto, bg="lightblue").place(relx=0.5, rely=0.1, anchor=CENTER)
 
 #Gemaakt door iedereen
 def begin_spel(modus):
@@ -181,8 +165,7 @@ def knop_geklikt(coordinaat,knop, speler):
 def schot_checken(rij,kolom,knop,bord, boten_lijst):
     if bord[rij][kolom] == "x":
         print("Raak!")
-        knop.config(bg="red", state="disabled")
-        Raakplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())
+        knop.config(bg="red",state="disabled")
         #gemaakt door: Rens
         # Dit stuk past de boot lijst aan, zodat het schot wordt geregistreerd.
         geraakt_vakje = (kolom, rij) #dit maakt de code makkelijker te lezen
@@ -192,20 +175,15 @@ def schot_checken(rij,kolom,knop,bord, boten_lijst):
                 print(boot['naam'],  "is geraakt!")
                 if len(boot["geraakt"]) == boot["lengte"]: #als boot[geraakt] net zo veel veel geraakte vakjes bevat als de lengte van de boot is deze gezonken
                     print(boot['naam'],  "is gezonken!")
-                    gezonkenplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())
-        #gemaakt door: Rens
                     boot["gezonken"] = True #de boot wordt als gezonken opgeslagen
     else: #Niet geraakt, dus er is misgeschoten
         print("Mis!")
         knop.config(bg="white",state ="disabled")#knop wel uitzetten, zodat hij niet nogmaals word ingedrukt
-        misplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())
 
     alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst_1)
     if alle_boten_gezonken:
         print("Alle boten zijn gezonken! Je hebt gewonnen!")
-        gewonnenplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())()
-
-
+        spel_eindigen()
     # Alleen bij singleplayer: computer laat automatisch schieten
     if spelmodus == "single" and not alle_boten_gezonken:
         venster.after(1000, computer_schot)
@@ -323,54 +301,6 @@ def spel_eindigen():
     eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", 
                          bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
     eind_melding.grid(row=11, column=0, columnspan=11, pady=20)
-
-def Raakplaatje(x=300, y=300, duur=1000):
-    raakpiraat_img = Image.open("zeeslag/raakpiraat.png")
-    raakpiraat_img = raakpiraat_img.resize((150, 150), Image.Resampling.LANCZOS)
-    raakpiraat_tk = ImageTk.PhotoImage(raakpiraat_img)
-
-    raakpiraat_label = Label(venster, image=raakpiraat_tk, bg="lightblue")
-    raakpiraat_label.image = raakpiraat_tk 
-    raakpiraat_label.place(x=x, y=y)
-
-    #zorgt ervoor dat het plaatje na 1 seconde weg gaat
-    venster.after(duur, raakpiraat_label.destroy)
-
-def misplaatje(x=300, y=300, duur=1000):
-    misplons_img = Image.open("zeeslag/misplons.png")
-    misplons_img = misplons_img.resize((150, 150), Image.Resampling.LANCZOS)
-    misplons_tk = ImageTk.PhotoImage(misplons_img)
-
-    misplons_label = Label(venster, image=misplons_tk, bg="lightblue")
-    misplons_label.image = misplons_tk 
-    misplons_label.place(x=x, y=y)
-
-    #zorgt ervoor dat het plaatje na 1 seconde weg gaat
-    venster.after(duur, misplons_label.destroy)
-
-def gezonkenplaatje(x=300, y=300, duur=3000):
-    gezonkenaap_img = Image.open("zeeslag/gezonkenaap.png")
-    gezonkenaap_img = gezonkenaap_img.resize((300, 300), Image.Resampling.LANCZOS)
-    gezonkenaap_tk = ImageTk.PhotoImage(gezonkenaap_img)
-
-    gezonkenaap_label = Label(venster, image=gezonkenaap_tk, bg="lightblue")
-    gezonkenaap_label.image = gezonkenaap_tk 
-    gezonkenaap_label.place(x=x, y=y)
-
-    #zorgt ervoor dat het plaatje na 3 seconde weg gaat
-    venster.after(duur, gezonkenaap_label.destroy)
-
-def gewonnenplaatje(duur=3000):
-    gewonnen_img = Image.open("zeeslag/gewonnen.png")
-    gewonnen_img = gewonnen_img.resize((300, 300), Image.Resampling.LANCZOS)
-    gewonnen_tk = ImageTk.PhotoImage(gewonnen_img)
-
-    gewonnen_label = Label(venster, image=gewonnen_tk, bg="lightblue")
-    gewonnen_label.image = gewonnen_tk 
-    gewonnen_label.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-    #zorgt ervoor dat het plaatje na 3 seconde weg gaat
-    venster.after(duur, gewonnen_label.destroy)
 
 
 ###HOOFDPROGRAMMA
