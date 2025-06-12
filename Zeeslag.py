@@ -28,7 +28,7 @@ boten_lijst_2 = []
 
 #Gemaakt door Thomas
 def welkomstscherm():
-    achtergrond_afbeelding = Image.open("achtergrond.jpg")  #Maakt de afbeelding open
+    achtergrond_afbeelding = Image.open("zeeslag/achtergrond.jpg")  #Maakt de afbeelding open
     achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(vensterWelkom, image=bg)
@@ -46,11 +46,11 @@ def welkomstscherm():
 
 
     global sp_knop_img, mp_knop_img
-    sp_knop_img = ImageTk.PhotoImage(Image.open("startknop.png").resize((300, 250)))
+    sp_knop_img = ImageTk.PhotoImage(Image.open("zeeslag/startknop.png").resize((300, 250)))
     Button(vensterWelkom, image=sp_knop_img, command=lambda: begin_spel("single"), borderwidth=5, bg="lightblue").place(relx=0.4, rely=0.5, anchor=CENTER)
 
     # Multiplayer knop
-    mp_knop_img = ImageTk.PhotoImage(Image.open("startknop.png").resize((300, 250)))
+    mp_knop_img = ImageTk.PhotoImage(Image.open("zeeslag/startknop.png").resize((300, 250)))
     Button(vensterWelkom, image=mp_knop_img, command=lambda: begin_spel("multi"), borderwidth=5, bg="lightblue").place(relx=0.6, rely=0.5, anchor=CENTER)
 
 
@@ -69,7 +69,7 @@ def begin_spel(modus):
     venster.config(bg="lightblue")
 
     #achtergrond instellen
-    achtergrond_afbeelding = Image.open("achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = Image.open("zeeslag/achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
     achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(venster, image=bg)
