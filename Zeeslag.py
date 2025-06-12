@@ -70,12 +70,14 @@ def maak_gui_bord():
     for kolom in range(10):
         label = Label(venster,text=kolom_letters[kolom],width=4, height=2, bg="lightblue",font=("Helvetica",14,"bold"))
         label.grid(row=0, column=kolom+1)
+        #tweede bord
         label2 = Label(venster,text=kolom_letters[kolom],width=4, height=2, bg="lightblue",font=("Helvetica",14,"bold"))
         label2.grid(row=0, column=kolom+13)        
     #Dit stukje geeft de rijen weer:
     for rij in range(1,11):
         rij_label = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
         rij_label.grid(row=rij, column=0)
+        #ruimte tussen borden
         spacer = Label(venster,width=4,height=2,bg="black")
         spacer.grid(row=rij,column=11)
         spacer2 = Label(venster,width=4,height=2,bg="black")
@@ -88,7 +90,7 @@ def maak_gui_bord():
             knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop.config(command=lambda vakje=coordinaat1, k=knop: knop_geklikt(vakje, k)) #Dit stukje hebben we gemaakt met hulp van chatGPT, het geeft de knop en de coordinaten van de knop terug wanneer er op geklikt word. Omdat er verwezen wordt naar de knop zelf, staat de command bij .config ipv bij de button zelf.
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
-            
+            # voor tweede bord
             knop2 = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop2.config(command=lambda vakje=coordinaat2, k=knop2: knop_geklikt2(vakje, k))
             knop2.grid(row=rij+1, column=kolom+13,padx=1,pady=1)
