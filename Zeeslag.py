@@ -1,4 +1,4 @@
-###GLOBALE VARIABELEN
+63###GLOBALE VARIABELEN
 from tkinter import *
 import random
 from PIL import Image, ImageTk
@@ -159,7 +159,7 @@ def knop_geklikt(coordinaat,knop, speler):
 
 
 #Gemaakt door Rens en Sjoerd
-def schot_checken(rij,kolom,knop2,bord,boten_lijst):
+def schot_checken(rij,kolom,knop):
     if bord[rij][kolom] == "x":
         print("Raak!")
         knop2.config(bg="red",state="disabled")
