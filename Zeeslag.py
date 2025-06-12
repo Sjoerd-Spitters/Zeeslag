@@ -1,4 +1,4 @@
-###GLOBALE VARIABELEN
+63###GLOBALE VARIABELEN
 from tkinter import *
 import random
 from PIL import Image, ImageTk
@@ -115,6 +115,7 @@ def knop_geklikt2(coordinaat,knop2):
     ##########################################Namen van de functies checken
 #Gemaakt door Rens en Sjoerd
 def schot_checken(rij,kolom,knop):
+    print("schot checken, rij:", rij , "kolom:" , kolom)
     if bord[rij][kolom] == "x":
         print("Raak!")
         knop.config(bg="red",state="disabled")
