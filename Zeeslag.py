@@ -43,59 +43,49 @@ def welkomstscherm():
     # beginKnop = Button(vensterWelkom, image=startknop_img, command=begin_spel, borderwidth=10, highlightthickness=0, bg="grey", activebackground="grey")
     # beginKnop.image = startknop_img
     # beginKnop.place(relx=0.5, rely=0.4,  anchor="center")
-
-
-    global sp_knop_img, mp_knop_img
+    global sp_knop_img,mp_knop_img
+    Label_sp = Label(vensterWelkom, text="Singleplayer",font=("Helvetica", 16, "bold"),bg="lightblue",fg="navy")
+    Label_sp.place(relx=0.4, rely=0.75, anchor=CENTER)
     sp_knop_img = ImageTk.PhotoImage(Image.open("startknop.png").resize((300, 250)))
     Button(vensterWelkom, image=sp_knop_img, command=lambda: begin_spel("single"), borderwidth=5, bg="lightblue").place(relx=0.4, rely=0.5, anchor=CENTER)
 
-    # Multiplayer knop
+    Label_mp =Label(vensterWelkom,text="Multiplayer",font=("Helvetica", 16, "bold"),bg="lightblue",fg="navy")
+    Label_mp.place(relx=0.6, rely=0.75, anchor=CENTER)
     mp_knop_img = ImageTk.PhotoImage(Image.open("startknop.png").resize((300, 250)))
     Button(vensterWelkom, image=mp_knop_img, command=lambda: begin_spel("multi"), borderwidth=5, bg="lightblue").place(relx=0.6, rely=0.5, anchor=CENTER)
 
 
+
+
 #Gemaakt door iedereen
 def begin_spel(modus):
-
-    global spelmodus
-    spelmodus = modus
-
+    global venster,spelmodus
+    spelmodus = modus #De spelmodus is nu afhankelijk van de aangegeven modus
     vensterWelkom.destroy() #welkomstvenster sluit
-
-    global venster
     venster = Tk()
-    venster.geometry(str(breedte) + "x" + str(hoogte))
+    venster.geometry(str(breedte) + "x" + str(hoogte)) #Op deze manier is er nog een sluitknop rechtsboven aanwezig (ipv fullscreen)
     venster.wm_title("Zeeslagje")
     venster.config(bg="lightblue")
 
-    #achtergrond instellen
-    achtergrond_afbeelding = Image.open("achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
-    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
+    achtergrond_afbeelding = Image.open("achtergrond.jpg") 
+    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar de grootte van het venster
+
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(venster, image=bg)
-    achtergrond_label.image = bg  # Houd een referentie vast
+    achtergrond_label.image = bg 
     achtergrond_label.place(x=0, y=0, relwidth=1, relheight=1)
-    
-    #maakt lege borden aan
+
     maak_lege_borden()
-
-
-
     if modus == "single":
         boot_plaats_willekeurig_bepalen(bord_speler1, boten_lijst_1)
         boot_plaats_willekeurig_bepalen(bord_speler2, boten_lijst_2)
     elif modus == "multi":
         boot_plaats_willekeurig_bepalen(bord_speler1, boten_lijst_1)
         boot_plaats_willekeurig_bepalen(bord_speler2, boten_lijst_2)
-
     maak_gui_bord()
     venster.mainloop()
 
-def start_spel_met_modus(modus):
-    global spelmodus
-    spelmodus = modus
-    vensterWelkom.destroy()
-    begin_spel()
+
 #Gemaakt door:Sjoerd
 def maak_gui_bord():
     #Eerst een leeg hokje
@@ -116,7 +106,6 @@ def maak_gui_bord():
         spacer.grid(row=rij,column=11)
         rij_label2 = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
         rij_label2.grid(row=rij, column=12)
-
     # Maakt een 10x10 raster van knoppen en geeft informatie bij het klikken van een knopje
     for rij in range(10):
         for kolom in range(10):
@@ -132,7 +121,7 @@ def maak_gui_bord():
     if spelmodus == "multi":
         for rij in range(10):
             for kolom in range(10):
-                # Beide knoppen actief
+        # Beide borden kunnen worden gebruikt
                 knop.config(state=NORMAL)
                 knop2.config(state=NORMAL)
     if spelmodus == "single":
@@ -159,10 +148,10 @@ def knop_geklikt(coordinaat,knop, speler):
 
 
 #Gemaakt door Rens en Sjoerd
-def schot_checken(rij,kolom,knop):
+def schot_checken(rij,kolom,knop,bord,boten_lijst):
     if bord[rij][kolom] == "x":
         print("Raak!")
-        knop2.config(bg="red",state="disabled")
+        knop.config(bg="red",state="disabled")
         #gemaakt door: Rens
         # Dit stuk past de boot lijst aan, zodat het schot wordt geregistreerd.
         geraakt_vakje = (kolom, rij) #dit maakt de code makkelijker te lezen
@@ -175,17 +164,19 @@ def schot_checken(rij,kolom,knop):
                     boot["gezonken"] = True #de boot wordt als gezonken opgeslagen
     else: #Niet geraakt, dus er is misgeschoten
         print("Mis!")
-        knop2.config(bg="white",state ="disabled")#knop wel uitzetten, zodat hij niet nogmaals word ingedrukt
+        knop.config(bg="white",state ="disabled")#knop wel uitzetten, zodat hij niet nogmaals word ingedrukt
 
-    alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst_1)
-    if alle_boten_gezonken:
-        print("Alle boten zijn gezonken! Je hebt gewonnen!")
-        spel_eindigen()
-    # Alleen bij singleplayer: computer laat automatisch schieten
-    if spelmodus == "single" and not alle_boten_gezonken:
-        venster.after(1000, computer_schot)
+    alle_boten_gezonken_bord_1 = all(boot["gezonken"] for boot in boten_lijst_1)
+    alle_boten_gezonken_bord_2 = all(boot["gezonken"] for boot in boten_lijst_2)
+    if alle_boten_gezonken_bord_1:
+        spel_eindigen("links")
+    if alle_boten_gezonken_bord_2:
+        spel_eindigen("rechts")
+    # # Alleen bij singleplayer: computer laat automatisch schieten
+    # if spelmodus == "single" and not alle_boten_gezonken:
+    #     venster.after(1000, computer_schot)
 
-def computer_schot():
+def computer_schot(): #Deepseek experimentje
     # Eenvoudige AI: willekeurig schieten
     rij = random.randint(0, 9)
     kolom = random.randint(0, 9)
@@ -195,6 +186,7 @@ def computer_schot():
         if isinstance(child, Button) and child.grid_info()["row"] == rij+1 and child.grid_info()["column"] == kolom+1:
             knop_geklikt(f"{chr(65+kolom)}{rij+1}", child, "speler_1")
             break
+
 #Gemaakt door:Sjoerd
 def maak_lege_borden(): #Maakt het bord aan voor de '2D' versie van het spel
     for _ in range(10): # teller wordt niet gebruikt in de loop dus een naam is onnodig
@@ -293,11 +285,13 @@ def plaats_alle_boten_automatisch(): #Dit zet de boten automatisch op een willek
     boot_plaats_willekeurig_bepalen(bord_speler2,boten_lijst_2)
 
 #Gemaakt door: Rens
-def spel_eindigen():
+def spel_eindigen(verloren_kant):
     global venster
-    eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", 
-                         bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
-    eind_melding.grid(row=11, column=0, columnspan=11, pady=20)
+    kolom=0
+    if verloren_kant == "rechts":
+        kolom =+ 12
+    eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
+    eind_melding.grid(row=11, column=kolom, columnspan=11, pady=20)
 
 
 ###HOOFDPROGRAMMA
