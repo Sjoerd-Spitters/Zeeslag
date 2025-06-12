@@ -1,4 +1,5 @@
 ###GLOBALE VARIABELEN
+#Sjoerd Spitters, Rens Spitters, Thomas van de wetering
 from tkinter import *
 import random
 from PIL import Image, ImageTk
@@ -324,6 +325,9 @@ def spel_eindigen():
                          bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
     eind_melding.grid(row=11, column=0, columnspan=11, pady=20)
 
+#thomas
+
+#er komt nu een plaatje als je een boot raakt
 def Raakplaatje(x=300, y=300, duur=1000):
     raakpiraat_img = Image.open("zeeslag/raakpiraat.png")
     raakpiraat_img = raakpiraat_img.resize((150, 150), Image.Resampling.LANCZOS)
@@ -336,6 +340,7 @@ def Raakplaatje(x=300, y=300, duur=1000):
     #zorgt ervoor dat het plaatje na 1 seconde weg gaat
     venster.after(duur, raakpiraat_label.destroy)
 
+#ook een als je de boot mist
 def misplaatje(x=300, y=300, duur=1000):
     misplons_img = Image.open("zeeslag/misplons.png")
     misplons_img = misplons_img.resize((150, 150), Image.Resampling.LANCZOS)
@@ -348,6 +353,7 @@ def misplaatje(x=300, y=300, duur=1000):
     #zorgt ervoor dat het plaatje na 1 seconde weg gaat
     venster.after(duur, misplons_label.destroy)
 
+#en als de boot gezonken is
 def gezonkenplaatje(x=300, y=300, duur=3000):
     gezonkenaap_img = Image.open("zeeslag/gezonkenaap.png")
     gezonkenaap_img = gezonkenaap_img.resize((300, 300), Image.Resampling.LANCZOS)
@@ -360,9 +366,10 @@ def gezonkenplaatje(x=300, y=300, duur=3000):
     #zorgt ervoor dat het plaatje na 3 seconde weg gaat
     venster.after(duur, gezonkenaap_label.destroy)
 
+#en als je wint
 def gewonnenplaatje(duur=3000):
     gewonnen_img = Image.open("zeeslag/gewonnen.png")
-    gewonnen_img = gewonnen_img.resize((300, 300), Image.Resampling.LANCZOS)
+    gewonnen_img = gewonnen_img.resize((500, 500), Image.Resampling.LANCZOS)
     gewonnen_tk = ImageTk.PhotoImage(gewonnen_img)
 
     gewonnen_label = Label(venster, image=gewonnen_tk, bg="lightblue")
