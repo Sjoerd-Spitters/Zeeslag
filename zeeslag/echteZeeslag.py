@@ -1,4 +1,5 @@
-63###GLOBALE VARIABELEN
+###GLOBALE VARIABELEN
+#Sjoerd Spitters, Rens Spitters, Thomas van de wetering
 from tkinter import *
 import random
 from PIL import Image, ImageTk
@@ -28,8 +29,8 @@ boten_lijst_2 = []
 
 #Gemaakt door Thomas
 def welkomstscherm():
-    achtergrond_afbeelding = Image.open("achtergrond.jpg")  #Maakt de afbeelding open
-    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
+    achtergrond_afbeelding = Image.open("zeeslag/achtergrond.jpg")  #Maakt de afbeelding open
+    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  #zorgt ervoor dat het in elk scherm past
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(vensterWelkom, image=bg)
     achtergrond_label.image = bg
@@ -54,6 +55,11 @@ def welkomstscherm():
     mp_knop_img = ImageTk.PhotoImage(Image.open("startknop.png").resize((300, 250)))
     Button(vensterWelkom, image=mp_knop_img, command=lambda: begin_spel("multi"), borderwidth=5, bg="lightblue").place(relx=0.6, rely=0.5, anchor=CENTER)
 
+    # Bewaar referentie aan afbeelding zodat deze zichtbaar blijft
+    vensterWelkom.titel_afbeelding = logo_foto
+
+    # Voeg afbeelding toe aan het venster
+    Label(vensterWelkom, image=logo_foto, bg="lightblue").place(relx=0.5, rely=0.1, anchor=CENTER)
 
 
 
@@ -67,9 +73,9 @@ def begin_spel(modus):
     venster.wm_title("Zeeslagje")
     venster.config(bg="lightblue")
 
-    achtergrond_afbeelding = Image.open("achtergrond.jpg") 
-    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar de grootte van het venster
-
+    #achtergrond instellen
+    achtergrond_afbeelding = Image.open("zeeslag/achtergrond.jpg")  # Gebruik je eigen afbeeldingsnaam hier
+    achtergrond_afbeelding = achtergrond_afbeelding.resize((breedte, hoogte), Image.Resampling.LANCZOS)  # Schaal naar venstergrootte
     bg = ImageTk.PhotoImage(achtergrond_afbeelding)
     achtergrond_label = Label(venster, image=bg)
     achtergrond_label.image = bg 
@@ -96,12 +102,14 @@ def maak_gui_bord():
     for kolom in range(10):
         label = Label(venster,text=kolom_letters[kolom],width=4, height=2, bg="lightblue",font=("Helvetica",14,"bold"))
         label.grid(row=0, column=kolom+1)
+        #tweede bord
         label2 = Label(venster,text=kolom_letters[kolom],width=4, height=2, bg="lightblue",font=("Helvetica",14,"bold"))
         label2.grid(row=0, column=kolom+13)        
     #Dit stukje geeft de rijen weer:
     for rij in range(1,11):
         rij_label = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
         rij_label.grid(row=rij, column=0)
+        #ruimte tussen borden
         spacer = Label(venster,width=4,height=2,bg="black")
         spacer.grid(row=rij,column=11)
         rij_label2 = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
@@ -114,7 +122,7 @@ def maak_gui_bord():
             knop = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop.config(command=lambda vakje=coordinaat1, k=knop: knop_geklikt(vakje, k, "speler_1")) #Dit stukje hebben we gemaakt met hulp van chatGPT, het geeft de knop en de coordinaten van de knop terug wanneer er op geklikt word. Omdat er verwezen wordt naar de knop zelf, staat de command bij .config ipv bij de button zelf.
             knop.grid(row=rij+1, column=kolom+1 ,padx=1,pady=1)
-            
+            # voor tweede bord
             knop2 = Button(venster, text="~", width=7, height=3,bg="#87CEEB",relief="raised",borderwidth=1)
             knop2.config(command=lambda vakje=coordinaat2, k=knop2: knop_geklikt(vakje, k, "speler_2"))
             knop2.grid(row=rij+1, column=kolom+13,padx=1,pady=1)
@@ -145,13 +153,15 @@ def knop_geklikt(coordinaat,knop, speler):
         bord = bord_speler2
         boten_lijst = boten_lijst_2
     schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop,bord,boten_lijst) 
+    return bord
 
 
 #Gemaakt door Rens en Sjoerd
-def schot_checken(rij,kolom,knop,bord,boten_lijst):
+def schot_checken(rij,kolom,knop,bord, boten_lijst):
     if bord[rij][kolom] == "x":
         print("Raak!")
-        knop.config(bg="red",state="disabled")
+        knop.config(bg="red", state="disabled")
+        Raakplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())
         #gemaakt door: Rens
         # Dit stuk past de boot lijst aan, zodat het schot wordt geregistreerd.
         geraakt_vakje = (kolom, rij) #dit maakt de code makkelijker te lezen
@@ -161,6 +171,8 @@ def schot_checken(rij,kolom,knop,bord,boten_lijst):
                 print(boot['naam'],  "is geraakt!")
                 if len(boot["geraakt"]) == boot["lengte"]: #als boot[geraakt] net zo veel veel geraakte vakjes bevat als de lengte van de boot is deze gezonken
                     print(boot['naam'],  "is gezonken!")
+                    gezonkenplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())
+        #gemaakt door: Rens
                     boot["gezonken"] = True #de boot wordt als gezonken opgeslagen
     else: #Niet geraakt, dus er is misgeschoten
         print("Mis!")
@@ -292,6 +304,60 @@ def spel_eindigen(verloren_kant):
         kolom =+ 12
     eind_melding = Label(venster, text=" Alle boten zijn gezonken! Spel afgelopen.", bg="lightblue", fg="darkred", font=("Helvetica", 16, "bold"))
     eind_melding.grid(row=11, column=kolom, columnspan=11, pady=20)
+
+#thomas
+
+#er komt nu een plaatje als je een boot raakt
+def Raakplaatje(x=300, y=300, duur=1000):
+    raakpiraat_img = Image.open("zeeslag/raakpiraat.png")
+    raakpiraat_img = raakpiraat_img.resize((150, 150), Image.Resampling.LANCZOS)
+    raakpiraat_tk = ImageTk.PhotoImage(raakpiraat_img)
+
+    raakpiraat_label = Label(venster, image=raakpiraat_tk, bg="lightblue")
+    raakpiraat_label.image = raakpiraat_tk 
+    raakpiraat_label.place(x=x, y=y)
+
+    #zorgt ervoor dat het plaatje na 1 seconde weg gaat
+    venster.after(duur, raakpiraat_label.destroy)
+
+#ook een als je de boot mist
+def misplaatje(x=300, y=300, duur=1000):
+    misplons_img = Image.open("zeeslag/misplons.png")
+    misplons_img = misplons_img.resize((150, 150), Image.Resampling.LANCZOS)
+    misplons_tk = ImageTk.PhotoImage(misplons_img)
+
+    misplons_label = Label(venster, image=misplons_tk, bg="lightblue")
+    misplons_label.image = misplons_tk 
+    misplons_label.place(x=x, y=y)
+
+    #zorgt ervoor dat het plaatje na 1 seconde weg gaat
+    venster.after(duur, misplons_label.destroy)
+
+#en als de boot gezonken is
+def gezonkenplaatje(x=300, y=300, duur=3000):
+    gezonkenaap_img = Image.open("zeeslag/gezonkenaap.png")
+    gezonkenaap_img = gezonkenaap_img.resize((300, 300), Image.Resampling.LANCZOS)
+    gezonkenaap_tk = ImageTk.PhotoImage(gezonkenaap_img)
+
+    gezonkenaap_label = Label(venster, image=gezonkenaap_tk, bg="lightblue")
+    gezonkenaap_label.image = gezonkenaap_tk 
+    gezonkenaap_label.place(x=x, y=y)
+
+    #zorgt ervoor dat het plaatje na 3 seconde weg gaat
+    venster.after(duur, gezonkenaap_label.destroy)
+
+#en als je wint
+def gewonnenplaatje(duur=3000):
+    gewonnen_img = Image.open("zeeslag/gewonnen.png")
+    gewonnen_img = gewonnen_img.resize((500, 500), Image.Resampling.LANCZOS)
+    gewonnen_tk = ImageTk.PhotoImage(gewonnen_img)
+
+    gewonnen_label = Label(venster, image=gewonnen_tk, bg="lightblue")
+    gewonnen_label.image = gewonnen_tk 
+    gewonnen_label.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+    #zorgt ervoor dat het plaatje na 3 seconde weg gaat
+    venster.after(duur, gewonnen_label.destroy)
 
 
 ###HOOFDPROGRAMMA
