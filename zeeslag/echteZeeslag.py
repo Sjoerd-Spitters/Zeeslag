@@ -3,6 +3,10 @@
 from tkinter import *
 import random
 from PIL import Image, ImageTk
+aantal_schoten_speler1 = 0
+aantal_schoten_speler2 = 0
+label_schoten_speler1 = None
+label_schoten_speler2 = None
 
 spelmodus = None
 vensterWelkom = Tk()
@@ -135,6 +139,14 @@ def maak_gui_bord():
         spacer.grid(row=rij,column=11)
         rij_label2 = Label(venster,text=str(rij),width=4,height=2,bg="lightblue",font=("Helvetica",14,"bold"))
         rij_label2.grid(row=rij, column=12)
+        
+        global label_schoten_speler1, label_schoten_speler2
+
+        label_schoten_speler1 = Label(venster, text="Speler 1 schoten: 0", font=("Helvetica", 12), bg="lightblue")
+        label_schoten_speler1.place(x=100, y=hoogte - 100)
+
+        label_schoten_speler2 = Label(venster, text="Speler 2 schoten: 0", font=("Helvetica", 12), bg="lightblue")
+        label_schoten_speler2.place(x=breedte - 250, y=hoogte - 100)
 
     # Maakt een 10x10 raster van knoppen en geeft informatie bij het klikken van een knopje
     for rij in range(10):
@@ -162,19 +174,26 @@ def maak_gui_bord():
                 knop2.config(state=DISABLED)  # Rechter bord uitschakelen
 
 #Gemaakt door:Iedereen
-def knop_geklikt(coordinaat,knop, speler):
-    vakNummer = str(coordinaat)
-    #Dit stukje zet de coordinaat om naar een rij en kolomwaarde, om het te kunnen gebruiken in de 2D versie van het spel
-    kolomLetter=vakNummer[0]
-    rijWaardeVakje=vakNummer[1:] #Pakt de rest van de string vakNummer (1: betekent index 1 en de rest daarna) 
-    kolomWaardeVakje= ord(kolomLetter) - ord("A") +1 #De omzetting van letter naar cijfer gedaan met behulp van ChatGPT
+def knop_geklikt(coordinaat, knop, speler):
+    global aantal_schoten_speler1, aantal_schoten_speler2
+
     if speler == "speler_1":
+        aantal_schoten_speler1 += 1
+        label_schoten_speler1.config(text=f"Speler 1 schoten: {aantal_schoten_speler1}")
         bord = bord_speler1
         boten_lijst = boten_lijst_1
     else:
+        aantal_schoten_speler2 += 1
+        label_schoten_speler2.config(text=f"Speler 2 schoten: {aantal_schoten_speler2}")
         bord = bord_speler2
         boten_lijst = boten_lijst_2
-    schot_checken(int(rijWaardeVakje)-1,int(kolomWaardeVakje)-1,knop,bord,boten_lijst) 
+
+    vakNummer = str(coordinaat)
+    kolomLetter = vakNummer[0]
+    rijWaardeVakje = vakNummer[1:]
+    kolomWaardeVakje = ord(kolomLetter) - ord("A") + 1
+
+    schot_checken(int(rijWaardeVakje) - 1, int(kolomWaardeVakje) - 1, knop, bord, boten_lijst)
     return bord
 
 
@@ -204,7 +223,7 @@ def schot_checken(rij,kolom,knop,bord, boten_lijst):
     alle_boten_gezonken = all(boot["gezonken"] for boot in boten_lijst_1)
     if alle_boten_gezonken:
         print("Alle boten zijn gezonken! Je hebt gewonnen!")
-        gewonnenplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())()
+        gewonnenplaatje(knop.winfo_rootx() - venster.winfo_rootx(), knop.winfo_rooty() - venster.winfo_rooty())
 
 
     # Alleen bij singleplayer: computer laat automatisch schieten
